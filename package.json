@@ -1,0 +1,12 @@
+{
+  "name": "nlog-cli",
+  "version": "0.0.1",
+  "description": "A CLI websocket client for nlog",
+  "main": "src/index.js",
+  "repository": "https://github.com/cpave3/nlog-cli",
+  "author": "Cameron Pavey <cpave3@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.15.1"
+  }
+}
