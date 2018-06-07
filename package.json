@@ -7,6 +7,9 @@
   "author": "Cameron Pavey <cpave3@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.15.1"
+    "commander": "^2.15.1",
+    "inquirer": "^6.0.0",
+    "moment": "^2.22.2",
+    "socket.io-client": "^2.1.1"
   }
 }
