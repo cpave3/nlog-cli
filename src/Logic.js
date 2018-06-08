@@ -1,11 +1,13 @@
 'use strict';
 
 // Package requirements
-const io = require('socket.io-client');
-const moment         = require('moment');
-const inquirer       = require('inquirer');
+const io       = require('socket.io-client');
+const moment   = require('moment');
+const inquirer = require('inquirer');
+const log      = require('./Log');
 
 const port = process.env.PORT || 4001;
+let availableWatchers = [];
 
 // Method declarations
 const methods = {
@@ -34,6 +36,9 @@ const methods = {
             .then((socket) => {
                 // We should now have a socket connection, and need to do something with it
                 socket.on('welcome', (data) => {
+                    // Remember the listed watchers for later usage
+                    availableWatchers = data;
+                    // Get some more details from the client
                     inquirer.prompt([{
                         type: 'checkbox',
                         name: 'watchers',
@@ -46,7 +51,8 @@ const methods = {
                     })
                     .then(() => {
                         socket.on('newLine', (data) => {
-                            console.log(data);
+                            // We got data, so let's display it nicely
+                            log.json(data.record);
                         });
                     });
                 });
