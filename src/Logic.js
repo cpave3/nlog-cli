@@ -41,12 +41,7 @@ const methods = {
                     availableWatchers = data;
                     // Get some more details from the client
 
-                    // TODO: Convert this into a method
-                    if (!!chosenWatchers) {
-                        // The user has already chosen before they were disconnected, so re-subscribe with the same.
-                        console.log('hit', socket, chosenWatchers);
-                        methods.subscribe(socket, chosenWatchers);
-                    } else {
+                    if (!chosenWatchers) {
                         inquirer.prompt([{
                             type: 'checkbox',
                             name: 'watchers',
@@ -58,6 +53,8 @@ const methods = {
                             // The user has given a decision on which watchers to subscribe to, tell the server
                             methods.subscribe(socket, chosenWatchers);
                         })
+                    } else {
+                        methods.subscribe(socket, chosenWatchers);
                     }
                 });
             })
