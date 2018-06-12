@@ -8,6 +8,7 @@ const log      = require('./Log');
 
 const port = process.env.PORT || 4001;
 let availableWatchers = [];
+let chosenWatchers;
 
 // Method declarations
 const methods = {
@@ -39,27 +40,37 @@ const methods = {
                     // Remember the listed watchers for later usage
                     availableWatchers = data;
                     // Get some more details from the client
-                    inquirer.prompt([{
-                        type: 'checkbox',
-                        name: 'watchers',
-                        message: 'Select which watchers to subscribe to',
-                        choices: data.map((row) => {return {name: row.name, value: row.uuid}})
-                    }])
-                    .then((selectedWatchers) => {
-                        // The user has given a decision on which watchers to subscribe to, tell the server
-                        socket.emit('subscribe', selectedWatchers);
-                    })
-                    .then(() => {
-                        socket.on('newLine', (data) => {
-                            // We got data, so let's display it nicely
-                            log.json(data.record);
-                        });
-                    });
+
+                    // TODO: Convert this into a method
+                    if (!!chosenWatchers) {
+                        // The user has already chosen before they were disconnected, so re-subscribe with the same.
+                        console.log('hit', socket, chosenWatchers);
+                        methods.subscribe(socket, chosenWatchers);
+                    } else {
+                        inquirer.prompt([{
+                            type: 'checkbox',
+                            name: 'watchers',
+                            message: 'Select which watchers to subscribe to',
+                            choices: data.map((row) => {return {name: row.name, value: row.uuid}})
+                        }])
+                        .then((selectedWatchers) => {
+                            chosenWatchers = selectedWatchers;
+                            // The user has given a decision on which watchers to subscribe to, tell the server
+                            methods.subscribe(socket, chosenWatchers);
+                        })
+                    }
                 });
             })
             .catch((err) => {
                 reject(err);
             })
+        });
+    },
+    subscribe: (socket, watchers) => {
+        socket.emit('subscribe', watchers);
+        socket.on('newLine', (data) => {
+            // We got data, so let's display it nicely
+            log.json(data.record);
         });
     }
 };
